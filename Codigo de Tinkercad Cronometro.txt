@@ -1,0 +1,112 @@
+LINK A PROJECTO DE TINKERCARD: 
+https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharecode=IFSH-o8d8kPp9keCNNjjKASMT8WSJPO0Elb1Q3x4nHI
+
+
+// C++ code
+//  
+
+//Declaramos constantes para definir los pines
+#define A 13
+#define B 12
+#define C 11
+#define D 10
+#define E 9
+#define F 8
+#define G 7
+#define H 6
+#define I 5
+#define J 4
+#define RESET 3
+#define PAUSA 2
+
+int pulsadorUno = 0;
+int pulsadorDos = 0;
+int contador = 0;
+
+void setup()
+{
+  //Activamos los pines de entrada y salida  
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(C, OUTPUT);
+  pinMode(D, OUTPUT);
+  pinMode(E, OUTPUT);
+  pinMode(F, OUTPUT);
+  pinMode(G, OUTPUT);
+  pinMode(H, OUTPUT);
+  pinMode(I, OUTPUT);
+  pinMode(J, OUTPUT);
+  pinMode(RESET, INPUT);
+  pinMode(PAUSA, INPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //Leemos el valor de los pines
+  pulsadorUno = digitalRead(PAUSA);
+  pulsadorDos = digitalRead(RESET);
+  
+  //Encendemos los leds uno por uno de acuerdo al contador
+  if(pulsadorUno == HIGH){    
+    switch(contador){
+      case 0:
+      case 1:
+  	digitalWrite(A, HIGH);
+      contador++;     
+      break;
+      case 2:
+  	digitalWrite(B, HIGH);
+      contador++; 
+      break;
+      case 3:
+  	digitalWrite(C, HIGH);
+      contador++;
+      break;
+      case 4:
+  	digitalWrite(D, HIGH);
+      contador++;
+      break;
+      case 5:
+  	digitalWrite(E, HIGH); 
+      contador++;
+      break;
+      case 6:
+  	digitalWrite(F, HIGH);
+      contador++;
+      break;
+      case 7:
+  	digitalWrite(G, HIGH);
+      contador++;
+      break;
+      case 8:
+  	digitalWrite(H, HIGH);
+      contador++;
+      break;
+      case 9:
+  	digitalWrite(I, HIGH);
+      contador++;
+      break;
+      case 10:
+  	digitalWrite(J, HIGH);
+      contador++;
+      break;
+    }
+  }
+  
+  if(pulsadorDos == HIGH && pulsadorUno == LOW){
+    contador = 0;
+  digitalWrite(A, LOW);
+  digitalWrite(B, LOW);
+  digitalWrite(C, LOW);
+  digitalWrite(D, LOW);  
+  digitalWrite(E, LOW);
+  digitalWrite(F, LOW);
+  digitalWrite(G, LOW);
+  digitalWrite(H, LOW);
+  digitalWrite(I, LOW);
+  digitalWrite(J, LOW);
+  }
+  
+  delay(200);
+}
