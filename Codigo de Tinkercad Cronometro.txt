@@ -5,23 +5,24 @@ https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharec
 // C++ code
 //  
 
-//Declaramos constantes para definir los pines
-#define A 13
-#define B 12
-#define C 11
-#define D 10
-#define E 9
-#define F 8
-#define G 7
-#define H 6
-#define I 5
-#define J 4
+//Declaramos constantes para definir las entradas
+#define A 4
+#define B 5
+#define C 6
+#define D 7
+#define E 8
+#define F 9
+#define G 10
+#define H 11
+#define I 12
+#define J 13
 #define RESET 3
 #define PAUSA 2
 
 int pulsadorUno = 0;
 int pulsadorDos = 0;
 int contador = 0;
+int segundos = 0;
 
 void setup()
 {
@@ -47,55 +48,72 @@ void loop()
   pulsadorUno = digitalRead(PAUSA);
   pulsadorDos = digitalRead(RESET);
   
+  segundos = millis()/1000;
+  
   //Encendemos los leds uno por uno de acuerdo al contador
   if(pulsadorUno == HIGH){    
-    switch(contador){
+    switch(segundos){
       case 0:
       case 1:
-  	digitalWrite(A, HIGH);
+  	  digitalWrite(A, HIGH);
       contador++;     
       break;
       case 2:
-  	digitalWrite(B, HIGH);
+      digitalWrite(A, LOW);
+  	  digitalWrite(B, HIGH);
       contador++; 
       break;
       case 3:
-  	digitalWrite(C, HIGH);
+  	  digitalWrite(A, HIGH);
+      digitalWrite(B, HIGH);
       contador++;
       break;
       case 4:
-  	digitalWrite(D, HIGH);
+      digitalWrite(A, LOW);
+      digitalWrite(B, LOW);
+  	  digitalWrite(C, HIGH);
       contador++;
       break;
       case 5:
-  	digitalWrite(E, HIGH); 
+      digitalWrite(A, HIGH);
+  	  digitalWrite(C, HIGH); 
       contador++;
       break;
       case 6:
-  	digitalWrite(F, HIGH);
+      digitalWrite(A, LOW);
+      digitalWrite(B, HIGH);
+  	  digitalWrite(C, HIGH);
       contador++;
       break;
       case 7:
-  	digitalWrite(G, HIGH);
+  	  digitalWrite(A, HIGH);
+      digitalWrite(B, HIGH);
+  	  digitalWrite(C, HIGH);
       contador++;
       break;
       case 8:
-  	digitalWrite(H, HIGH);
+      digitalWrite(A, LOW);
+      digitalWrite(B, LOW);
+  	  digitalWrite(C, LOW);
+  	  digitalWrite(D, HIGH);
       contador++;
       break;
       case 9:
-  	digitalWrite(I, HIGH);
+      digitalWrite(A, HIGH);
+  	  digitalWrite(D, HIGH);
       contador++;
       break;
       case 10:
-  	digitalWrite(J, HIGH);
+      digitalWrite(A, LOW);
+  	  digitalWrite(B, HIGH);
+      digitalWrite(D, HIGH);
       contador++;
       break;
     }
   }
   
   if(pulsadorDos == HIGH && pulsadorUno == LOW){
-    contador = 0;
+  contador = 0;
   digitalWrite(A, LOW);
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
@@ -108,5 +126,5 @@ void loop()
   digitalWrite(J, LOW);
   }
   
-  delay(200);
+  delay(1000);
 }
