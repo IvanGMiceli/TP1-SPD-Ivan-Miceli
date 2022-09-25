@@ -1,7 +1,6 @@
 LINK A PROJECTO DE TINKERCARD: 
 https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharecode=IFSH-o8d8kPp9keCNNjjKASMT8WSJPO0Elb1Q3x4nHI
 
-
 // C++ code
 //  
 
@@ -21,8 +20,8 @@ https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharec
 
 int pulsadorUno = 0;
 int pulsadorDos = 0;
+int segundos;
 int contador = 0;
-int segundos = 0;
 
 void setup()
 {
@@ -50,10 +49,37 @@ void loop()
   
   segundos = millis()/1000;
   
-  //Encendemos los leds uno por uno de acuerdo al contador
-  if(pulsadorUno == HIGH){    
-    switch(segundos){
+  //Encendemos los leds de acuerdo al tiempo transcurrido y sumamos el contador
+  if(pulsadorUno == HIGH)
+  {    
+    iniciarLeds(segundos);
+  }
+  
+  //Si el pulsador de reset esta siendo apretado y el pausar/continuar esta sin ser presionado, reseteamos el contador a 0
+  if(pulsadorDos == HIGH && pulsadorUno == LOW)
+  {
+    resetearLeds(contador);
+  }
+  
+  //delay(50);
+}
+
+//Esta funcion se encarga de prender los leds, recibiendo como parametro un entero, que corresponde a los segundos transcurridos. No retorna nada.
+void iniciarLeds (int digito)
+{    
+  switch(digito){
       case 0:
+      digitalWrite(A, LOW);
+  	  digitalWrite(B, LOW);
+      digitalWrite(C, LOW);
+      digitalWrite(D, LOW);  
+      digitalWrite(E, LOW);
+      digitalWrite(F, LOW);
+      digitalWrite(G, LOW);
+      digitalWrite(H, LOW);
+      digitalWrite(I, LOW);
+      digitalWrite(J, LOW);
+      break;
       case 1:
   	  digitalWrite(A, HIGH);
       contador++;     
@@ -109,11 +135,13 @@ void loop()
       digitalWrite(D, HIGH);
       contador++;
       break;
-    }
-  }
-  
-  if(pulsadorDos == HIGH && pulsadorUno == LOW){
-  contador = 0;
+    }  
+}
+
+//Esta funcion se encarga de resetear el contador de tiempo a 0, recibiendo como parametro un entero, que corresponde al contador de tiempo. No retorna nada.
+void resetearLeds (int digito)
+{  
+  digito = 0;
   digitalWrite(A, LOW);
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
@@ -124,7 +152,5 @@ void loop()
   digitalWrite(H, LOW);
   digitalWrite(I, LOW);
   digitalWrite(J, LOW);
-  }
   
-  delay(1000);
 }
