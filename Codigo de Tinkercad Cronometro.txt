@@ -18,8 +18,8 @@ https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharec
 #define RESET 3
 #define PAUSA 2
 
-int pulsadorUno = 0;
-int pulsadorDos = 0;
+int pulsadorUno;
+int pulsadorDos;
 int segundos;
 int contador = 0;
 
@@ -48,20 +48,27 @@ void loop()
   pulsadorDos = digitalRead(RESET);
   
   segundos = millis()/1000;
-  
+    
   //Encendemos los leds de acuerdo al tiempo transcurrido y sumamos el contador
-  if(pulsadorUno == HIGH)
+  if(pulsadorUno == 1)
   {    
     iniciarLeds(segundos);
   }
   
+  if(pulsadorUno == 0)
+  {
+    contador = 0;
+  }
+    
+ 
   //Si el pulsador de reset esta siendo apretado y el pausar/continuar esta sin ser presionado, reseteamos el contador a 0
-  if(pulsadorDos == HIGH && pulsadorUno == LOW)
+  if(pulsadorDos == 1 && pulsadorUno == 0)
   {
     resetearLeds(contador);
+    contador = 0;
   }
   
-  //delay(50);
+  delay(1000);
 }
 
 //Esta funcion se encarga de prender los leds, recibiendo como parametro un entero, que corresponde a los segundos transcurridos. No retorna nada.
@@ -69,16 +76,6 @@ void iniciarLeds (int digito)
 {    
   switch(digito){
       case 0:
-      digitalWrite(A, LOW);
-  	  digitalWrite(B, LOW);
-      digitalWrite(C, LOW);
-      digitalWrite(D, LOW);  
-      digitalWrite(E, LOW);
-      digitalWrite(F, LOW);
-      digitalWrite(G, LOW);
-      digitalWrite(H, LOW);
-      digitalWrite(I, LOW);
-      digitalWrite(J, LOW);
       break;
       case 1:
   	  digitalWrite(A, HIGH);
@@ -91,7 +88,6 @@ void iniciarLeds (int digito)
       break;
       case 3:
   	  digitalWrite(A, HIGH);
-      digitalWrite(B, HIGH);
       contador++;
       break;
       case 4:
@@ -101,20 +97,16 @@ void iniciarLeds (int digito)
       contador++;
       break;
       case 5:
-      digitalWrite(A, HIGH);
-  	  digitalWrite(C, HIGH); 
+      digitalWrite(A, HIGH); 
       contador++;
       break;
       case 6:
       digitalWrite(A, LOW);
       digitalWrite(B, HIGH);
-  	  digitalWrite(C, HIGH);
       contador++;
       break;
       case 7:
   	  digitalWrite(A, HIGH);
-      digitalWrite(B, HIGH);
-  	  digitalWrite(C, HIGH);
       contador++;
       break;
       case 8:
@@ -126,15 +118,40 @@ void iniciarLeds (int digito)
       break;
       case 9:
       digitalWrite(A, HIGH);
-  	  digitalWrite(D, HIGH);
-      contador++;
+  	  contador++;
       break;
       case 10:
       digitalWrite(A, LOW);
   	  digitalWrite(B, HIGH);
-      digitalWrite(D, HIGH);
       contador++;
       break;
+      case 11:
+      digitalWrite(A, HIGH);
+  	  contador++;
+      break;
+      case 12:
+      digitalWrite(A, LOW);
+      digitalWrite(B, LOW);
+      digitalWrite(C, HIGH);
+  	  contador++;
+      break;
+      case 13:
+      digitalWrite(A, HIGH);
+   	  contador++;
+      break;
+      case 14:
+     
+      default:
+      digitalWrite(A, LOW);
+  	  digitalWrite(B, LOW);
+      digitalWrite(C, LOW);
+      digitalWrite(D, LOW);  
+      digitalWrite(E, LOW);
+      digitalWrite(F, LOW);
+      digitalWrite(G, LOW);
+      digitalWrite(H, LOW);
+      digitalWrite(I, LOW);
+      digitalWrite(J, LOW);
     }  
 }
 
