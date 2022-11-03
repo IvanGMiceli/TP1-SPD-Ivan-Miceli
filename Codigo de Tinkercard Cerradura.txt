@@ -1,0 +1,23 @@
+https://www.tinkercad.com/things/30pJzuyZ7eG-fantabulous-leelo-bruticus/editel?sharecode=RvijrqHjcpcR6HTmp6wwt1PRss_g0pym6DIEOTgmAkM
+
+#include <Keypad.h>
+#include <LiquidCrystal.h>
+
+LiquidCrystal cartel(13, 8, A0, A1, A2, A3);
+
+void setup()
+{
+  pinMode(8, OUTPUT);
+  pinMode(13, OUTPUT); 
+  cartel.begin(16,2);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  cartel.setCursor(0,0);
+  
+  cartel.write("Password:");
+  
+  delay(25);
+}
