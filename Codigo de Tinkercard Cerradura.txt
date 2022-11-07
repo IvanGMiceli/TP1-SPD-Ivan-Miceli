@@ -3,13 +3,13 @@ https://www.tinkercad.com/things/30pJzuyZ7eG-fantabulous-leelo-bruticus/editel?s
 #include <Keypad.h>
 #include <LiquidCrystal.h>
 
-//inicializamos cartel y declamos tamaño de teclado
+/*inicializamos cartel y declamos tamaño de teclado*/
 LiquidCrystal cartel(13, 8, A0, A1, A2, A3);
 
 const byte FILAS = 4;
 const byte COLUMNAS = 4;
 
-//declaramos array de caracteres de teclado
+/*declaramos array de caracteres de teclado*/
 char caracteres[4][4] = {
   {'1','2','3','A'},
   {'4','5','6','B'},
@@ -17,7 +17,7 @@ char caracteres[4][4] = {
   {'*','0','#','D'},  
 };
 
-//declaramos entradas de pines y mapeamos funcion
+/*declaramos entradas de pines y mapeamos funcion*/
 byte pinesFilas[] = {7,6,5,4};
 byte pinesColumnas[] = {3,2,1,0};
 
@@ -25,52 +25,99 @@ Keypad teclado = Keypad( makeKeymap(caracteres)
                 ,pinesFilas, pinesColumnas,
                 FILAS, COLUMNAS);
 
+int ledRojo = 10;
+int ledVerde = 9;
+int reset = 12;
+int enter = 11;
+int botonReset = 0;
+int botonEnter = 0;
+int control = 0;
+char password[7] = "182022";
+char ingreso[7];
+
 void setup()
 {
+
   pinMode(8, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
+  pinMode(ledVerde, OUTPUT);
+  pinMode(ledRojo, OUTPUT);
+  pinMode(reset, INPUT);
+  pinMode(enter, INPUT);
   pinMode(13, OUTPUT); 
   cartel.begin(16,2);
-  Serial.begin(9600);
+  Serial.begin(9600);  
+  cartel.home();
+  cartel.write("Password:");
 }
 
 void loop()
-{  
-  //seteamos cursor
-  cartel.setCursor(0,0);
-  
-  //escribimos el mensaje
-  cartel.write("Password:");
-  
-  //inicializamos variable y asignacion    
+{ 
+  /*inicializamos variable y asignacion*/
+  int botonConfiguration = analogRead(A4);
   char boton = teclado.getKey();
   
-    if(boton != NO_KEY){
-  	Serial.println(boton);      
-    cartel.print(boton);
-  }
-  
-  
-  
-  //Leemos el ingreso y prendemos los leds
-  if(boton == '2'){
-    digitalWrite(9, HIGH);
-    digitalWrite(10, LOW);
-  }
-  else{
-    if(boton == '7'){
-      digitalWrite(9, LOW);
-      digitalWrite(10, HIGH);
-    }
-    else{
-      //reinciamos con leds con asterisco
-      if(boton == '*'){
-        digitalWrite(9, LOW);
-        digitalWrite(10, LOW);
+  if(boton){
+    
+    ingreso[control] = boton;
+    control++;
+    cartel.write(boton);
+
+  /*una vez llegado a 6 ingresos, compara el password 
+   con lo ingresado y enciende los leds*/
+    if(control == 6){
+      if(strcmp(password, ingreso) == 0){
+        digitalWrite(ledVerde, HIGH);
+        cartel.setCursor(0,0);
+        cartel.write("PASSWORD OK!    ");
       }
-    }
+      else{
+        digitalWrite(ledRojo, HIGH);
+        cartel.setCursor(0,0);
+        cartel.write("PASSWORD Fail!    ");
+      }
+      control = 0;
+    } 
   }
   
-  delay(25);
+    if(boton != NO_KEY){
+    Serial.println(boton);
+  	}
+  
+  botonReset = digitalRead(reset);  
+  botonEnter = digitalRead(enter);
+  
+
+  /*apagamos leds y reiniciamos display con boton reset*/
+   if(botonReset == 1){
+        digitalWrite(ledVerde, LOW);
+        digitalWrite(ledRojo, LOW);
+        cartel.clear();
+        cartel.home();
+  		cartel.write("Password:");
+      }
+  /*probamos el password ingresado con boton enter*/
+  if(botonEnter == 1){
+    if(strcmp(password, ingreso) == 0){
+        digitalWrite(ledVerde, HIGH);        
+        cartel.setCursor(0,0);
+        cartel.write("PASSWORD OK!    ");
+      }
+      else{
+        digitalWrite(ledRojo, HIGH);
+        cartel.setCursor(0,0);
+        cartel.write("PASSWORD Fail!    ");
+      }
+      control = 0;
+  }
+
+  /*configuramos nueva contraseña con boton configuration*/
+  if(botonConfiguration == 1023){
+    cartel.clear();
+    cartel.home();
+    cartel.write("Nuevo Password:");
+    cartel.setCursor(0,1);
+  }
+    
+
+  delay(100);
 }
