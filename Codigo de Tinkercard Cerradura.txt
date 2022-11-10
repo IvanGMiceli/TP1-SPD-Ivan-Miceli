@@ -2,9 +2,13 @@ https://www.tinkercad.com/things/30pJzuyZ7eG-fantabulous-leelo-bruticus/editel?s
 
 #include <Keypad.h>
 #include <LiquidCrystal.h>
+#include <Servo.h> 
+
+void configurar (char key,int cont,char* pass);
 
 /*inicializamos cartel y declamos tamaño de teclado*/
 LiquidCrystal cartel(13, 8, A0, A1, A2, A3);
+Servo miServo;
 
 const byte FILAS = 4;
 const byte COLUMNAS = 4;
@@ -32,8 +36,12 @@ int enter = 11;
 int botonReset = 0;
 int botonEnter = 0;
 int control = 0;
+int controlDos = 0;
+char ingreso[7]; 
+int bandera;
 char password[7] = "2C2022";
-char ingreso[7];
+char passNuevo[7];
+int angulo = 0;
 
 /*
 int tiempoAntes = 0;
@@ -43,8 +51,9 @@ int contador = 0;
 */
 
 void setup()
-{
-
+{ 
+  miServo.attach(A5);
+  miServo.write(90);
   pinMode(8, OUTPUT);
   pinMode(ledVerde, OUTPUT);
   pinMode(ledRojo, OUTPUT);
@@ -62,8 +71,7 @@ void loop()
   int botonConfiguration = analogRead(A4);
   char boton = teclado.getKey();
   
-  if(boton){
-    
+  if(boton){  
     ingreso[control] = boton;
     control++;
     cartel.write(boton);
@@ -71,10 +79,11 @@ void loop()
   /*una vez llegado a 6 ingresos, compara el password 
    con lo ingresado y enciende los leds*/
     if(control == 6){
-      if(strcmp(password, ingreso) == 0){
+      if((strcmp(password, ingreso) == 0) || (strcmp(passNuevo, ingreso) == 0)){
         cartel.setCursor(0,0);
         cartel.write("PASSWORD OK!    ");
         digitalWrite(ledVerde, HIGH);
+        miServo.write(0);
       }
       else{
         cartel.setCursor(0,0);
@@ -82,6 +91,7 @@ void loop()
         digitalWrite(ledRojo, HIGH);
       }
       control = 0;
+      controlDos = 0;
     } 
   }
   
@@ -95,6 +105,7 @@ void loop()
 
   /*apagamos leds y reiniciamos display con boton reset*/
    if(botonReset == 1){
+        miServo.write(90);
         digitalWrite(ledVerde, LOW);
         digitalWrite(ledRojo, LOW);
         cartel.clear();
@@ -118,10 +129,12 @@ void loop()
 
   /*configuramos nueva contraseña con boton configuration*/
   if(botonConfiguration == 1023){
+    bandera = 1;
     cartel.clear();
     cartel.home();
     cartel.write("Nuevo Password:");
-    cartel.setCursor(0,1);
+    cartel.setCursor(0,1); 
+    configurar(boton, controlDos, passNuevo);
   }
  
   //programar prendido de led por 5 segundos
@@ -144,3 +157,20 @@ void loop()
 
   delay(100);
 }
+
+
+void configurar (char key, int cont, char* pass){ 
+  
+if(key){  
+    pass[cont] = key;
+    cont++;
+    cartel.write(key);
+
+    if(cont == 6){
+        cartel.clear();
+        cartel.setCursor(0,0);
+        cartel.write("Cambio OK!     ");   
+      }
+    } 
+}
+  
