@@ -21,11 +21,11 @@ https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharec
 /*inicializamos variable y asignacion*/
 int pulsadorUno;
 int pulsadorDos;
-int segundos;
 int array[10] = {0,0,0,0,0,0,0,0,0,0};
-int contador = 0;
-bool antirebote = false;
+int cien;
+bool antireboteP = false;
 bool en_pausa = true;
+bool antireboteR = false;
 
 void setup()
 {
@@ -43,6 +43,9 @@ void setup()
   pinMode(RESET, INPUT);
   pinMode(PAUSA, INPUT);
   Serial.begin(9600);
+  Serial.setTimeout(25);
+  Serial.println("INICIO");
+  Serial.println("PAUSA");
 }
 
 void loop()
@@ -176,22 +179,27 @@ void loop()
   
 }
 
-
+//funcion que controla la lectura de botones PAUSA y RESET con su antirebote
 void controlAntiRebote()
 {
+  //leo boton de pausa, mi variable antirebote y verifico si el programa esta en pausa
           pulsadorUno = digitalRead(PAUSA);
           if(pulsadorUno==HIGH && antireboteP == false && en_pausa == false)
           {
+  //si no esta, lo detengo, cambio mi variable antirebote e imprimo el estado        
             antireboteP = true;
             en_pausa = true;
             Serial.println("PAUSA");
           }
+  //leo boton de pausa, mi variable antirebote y verifico si el programa esta en pausa
           if(pulsadorUno==HIGH && antireboteP == false && en_pausa == true)
           {
+  //si esta en pausa, lo reanudo, cambio mi variable antirebote e imprimo el estado
             antireboteP = true;
             en_pausa = false;
              Serial.println("CONTANDO");
           }
+  //estado del boton pausa cuando lo suelto o no lo aprieto
           if(pulsadorUno==LOW)
           {
             antireboteP = false;
@@ -208,6 +216,8 @@ void controlAntiRebote()
             antireboteR = false;
           }
 }
+
+//funcion que resetea todos los valores del array en cada indicie a 0
 void resetearLeds()
 {
     array[0] = 0;
@@ -221,6 +231,8 @@ void resetearLeds()
     array[8] = 0;
     array[9] = 0;
 }
+
+//funcion que enciende los leds de acuerdo a su estado
 void mostrarLeds()
 {
         digitalWrite(A, array[0]);
@@ -235,6 +247,8 @@ void mostrarLeds()
         digitalWrite(J, array[9]);
 }
 
+//funcion que evalua y cambia el valor del indice de cada elemento del array(led) 
+//teniendo en cuenta el estado del anterior, para el encendido o apagado del siguiente led
 void contadorArray()
 {
           if(array[0]==0)
