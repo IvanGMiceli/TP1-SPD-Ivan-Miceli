@@ -18,10 +18,14 @@ https://www.tinkercad.com/things/1jyqK22VRD5-tp1-spd-1f-cronometro/editel?sharec
 #define RESET 3
 #define PAUSA 2
 
+/*inicializamos variable y asignacion*/
 int pulsadorUno;
 int pulsadorDos;
 int segundos;
+int array[10] = {0,0,0,0,0,0,0,0,0,0};
 int contador = 0;
+bool antirebote = false;
+bool en_pausa = true;
 
 void setup()
 {
@@ -43,131 +47,131 @@ void setup()
 
 void loop()
 {
-  //Leemos el valor de los pines
   pulsadorUno = digitalRead(PAUSA);
+  if(pulsadorUno==HIGH && antirebote == false && en_pausa == false)
+  {
+    antirebote = true;
+    en_pausa = true;
+  }
+  if(pulsadorUno==HIGH && antirebote == false && en_pausa == true)
+  {
+    antirebote = true;
+    en_pausa = false;
+  }
+  if(pulsadorUno==LOW)
+  {
+    antirebote = false;
+  }
   pulsadorDos = digitalRead(RESET);
-  
-  segundos = millis()/1000;
-    
-  //Encendemos los leds de acuerdo al tiempo transcurrido y sumamos el contador
-  if(pulsadorUno == 1)
-  {    
-    iniciarLeds(segundos);
-  }
-  
-  if(pulsadorUno == 0)
+  if(pulsadorDos==1)
   {
-    contador = 0;
+    array[0] = 0;
+    array[1] = 0;
+    array[2] = 0;
+    array[3] = 0;
+    array[4] = 0;
+    array[5] = 0;
+    array[6] = 0;
+    array[7] = 0;
+    array[8] = 0;
+    array[9] = 0;
   }
-    
- 
-  //Si el pulsador de reset esta siendo apretado y el pausar/continuar esta sin ser presionado, reseteamos el contador a 0
-  if(pulsadorDos == 1 && pulsadorUno == 0)
+  if(en_pausa == false)
   {
-    resetearLeds(contador);
-    contador = 0;
+    if(array[0]==0)
+    {
+      array[0]=1;
+    }
+    else
+    {
+      array[0]=0;
+      if(array[1]==0)
+      {
+        array[1]=1;
+      }
+      else
+      {
+        array[1]=0;
+        if(array[2]==0)
+        {
+          array[2]=1;
+        }
+        else
+        {
+           array[2]=0;
+           if(array[3]==0)
+            {
+              array[3]=1;
+            }
+            else
+            {
+              array[3]=0;
+              if(array[4]==0)
+              {
+                array[4]=1;
+              }
+              else
+              {
+               array[4]=0;
+               if(array[5]==0)
+               {
+                array[5]=1; 
+               }
+               else
+               {
+                 array[5]=0;
+                 if(array[6]==0)
+                 {
+                  array[6]=1; 
+                 }
+                 else
+                 {
+                  array[6]=0;
+                    if(array[7]==0)
+                   {
+                    array[7]=1; 
+                   }
+                   else
+                   {
+                    array[7]=0;
+                     if(array[8]==0)
+                     {
+                      array[8]=1; 
+                     }
+                     else
+                     {
+                      array[8]=0;
+                       if(array[9]==0)
+                       {
+                        array[9]=1; 
+                       }
+                       else
+                       {
+                        array[9]=0;
+                       }
+                     }
+                   }
+                 }
+               }
+             }          
+          }
+        }
+      }
+    }
+    Serial.print("Seg: ");
+    Serial.println(contador);
+    delay(500);
+    contador++;
   }
-  
-  delay(1000);
-}
-
-//Esta funcion se encarga de prender los leds, recibiendo como parametro un entero, que corresponde a los segundos transcurridos. No retorna nada.
-void iniciarLeds (int digito)
-{    
-  switch(digito){
-      case 0:
-      break;
-      case 1:
-  	  digitalWrite(A, HIGH);
-      contador++;     
-      break;
-      case 2:
-      digitalWrite(A, LOW);
-  	  digitalWrite(B, HIGH);
-      contador++; 
-      break;
-      case 3:
-  	  digitalWrite(A, HIGH);
-      contador++;
-      break;
-      case 4:
-      digitalWrite(A, LOW);
-      digitalWrite(B, LOW);
-  	  digitalWrite(C, HIGH);
-      contador++;
-      break;
-      case 5:
-      digitalWrite(A, HIGH); 
-      contador++;
-      break;
-      case 6:
-      digitalWrite(A, LOW);
-      digitalWrite(B, HIGH);
-      contador++;
-      break;
-      case 7:
-  	  digitalWrite(A, HIGH);
-      contador++;
-      break;
-      case 8:
-      digitalWrite(A, LOW);
-      digitalWrite(B, LOW);
-  	  digitalWrite(C, LOW);
-  	  digitalWrite(D, HIGH);
-      contador++;
-      break;
-      case 9:
-      digitalWrite(A, HIGH);
-  	  contador++;
-      break;
-      case 10:
-      digitalWrite(A, LOW);
-  	  digitalWrite(B, HIGH);
-      contador++;
-      break;
-      case 11:
-      digitalWrite(A, HIGH);
-  	  contador++;
-      break;
-      case 12:
-      digitalWrite(A, LOW);
-      digitalWrite(B, LOW);
-      digitalWrite(C, HIGH);
-  	  contador++;
-      break;
-      case 13:
-      digitalWrite(A, HIGH);
-   	  contador++;
-      break;
-      case 14:
-     
-      default:
-      digitalWrite(A, LOW);
-  	  digitalWrite(B, LOW);
-      digitalWrite(C, LOW);
-      digitalWrite(D, LOW);  
-      digitalWrite(E, LOW);
-      digitalWrite(F, LOW);
-      digitalWrite(G, LOW);
-      digitalWrite(H, LOW);
-      digitalWrite(I, LOW);
-      digitalWrite(J, LOW);
-    }  
-}
-
-//Esta funcion se encarga de resetear el contador de tiempo a 0, recibiendo como parametro un entero, que corresponde al contador de tiempo. No retorna nada.
-void resetearLeds (int digito)
-{  
-  digito = 0;
-  digitalWrite(A, LOW);
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
-  digitalWrite(D, LOW);  
-  digitalWrite(E, LOW);
-  digitalWrite(F, LOW);
-  digitalWrite(G, LOW);
-  digitalWrite(H, LOW);
-  digitalWrite(I, LOW);
-  digitalWrite(J, LOW);
+    digitalWrite(A, array[0]);
+    digitalWrite(B, array[1]);
+    digitalWrite(C, array[2]);
+    digitalWrite(D, array[3]);
+    digitalWrite(E, array[4]);
+    digitalWrite(F, array[5]);
+    digitalWrite(G, array[6]);
+    digitalWrite(H, array[7]);
+    digitalWrite(I, array[8]);
+    digitalWrite(J, array[9]);
   
 }
