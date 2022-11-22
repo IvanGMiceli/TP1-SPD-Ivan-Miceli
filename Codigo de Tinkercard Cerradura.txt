@@ -4,8 +4,6 @@ https://www.tinkercad.com/things/30pJzuyZ7eG-fantabulous-leelo-bruticus/editel?s
 #include <LiquidCrystal.h>
 #include <Servo.h> 
 
-void configurar (char key,int cont,char* pass);
-
 /*inicializamos cartel y declamos tamaño de teclado*/
 LiquidCrystal cartel(13, 8, A0, A1, A2, A3);
 Servo miServo;
@@ -36,19 +34,11 @@ int enter = 11;
 int botonReset = 0;
 int botonEnter = 0;
 int control = 0;
-int controlDos = 0;
 char ingreso[7]; 
-int bandera;
 char password[7] = "2C2022";
-char passNuevo[7];
 int angulo = 0;
-
-/*
-int tiempoAntes = 0;
-int periodo = 1000;
-int estado = 0;
-int contador = 0;
-*/
+int ingresoContra;
+int reinicio;
 
 void setup()
 { 
@@ -71,7 +61,7 @@ void loop()
   int botonConfiguration = analogRead(A4);
   char boton = teclado.getKey();
   
-  if(boton){  
+  if(boton != NO_KEY && ingresoContra == 0){
     ingreso[control] = boton;
     control++;
     cartel.write(boton);
@@ -79,38 +69,43 @@ void loop()
   /*una vez llegado a 6 ingresos, compara el password 
    con lo ingresado y enciende los leds*/
     if(control == 6){
-      if((strcmp(password, ingreso) == 0) || (strcmp(passNuevo, ingreso) == 0)){
-        cartel.setCursor(0,0);
-        cartel.write("PASSWORD OK!    ");
-        digitalWrite(ledVerde, HIGH);
-        miServo.write(0);
-      }
+        if(strcmp(password, ingreso) == 0){
+          cartel.setCursor(0,0);
+          cartel.write("PASSWORD OK!    ");
+          digitalWrite(ledVerde, HIGH);
+          miServo.write(0);
+        }
       else{
         cartel.setCursor(0,0);
         cartel.write("PASSWORD Fail!    ");
         digitalWrite(ledRojo, HIGH);
+        }
+        control = 0;
       }
-      control = 0;
-      controlDos = 0;
-    } 
+    
   }
   
-    if(boton != NO_KEY){
-    Serial.println(boton);
-  	}
-  
+  /*inicializamos variable y asignacion*/
   botonReset = digitalRead(reset);  
   botonEnter = digitalRead(enter);
   
 
   /*apagamos leds y reiniciamos display con boton reset*/
-   if(botonReset == 1){
+   if(botonReset == 1 || reinicio == 1){
         miServo.write(90);
         digitalWrite(ledVerde, LOW);
         digitalWrite(ledRojo, LOW);
         cartel.clear();
         cartel.home();
   		cartel.write("Password:");
+     	ingreso[0]=NULL;
+        ingreso[1]=NULL;
+        ingreso[2]=NULL;
+        ingreso[3]=NULL;
+        ingreso[4]=NULL;
+        ingreso[5]=NULL;
+        control = 0;
+        reinicio = 0;
       }
   /*probamos el password ingresado con boton enter*/
   if(botonEnter == 1){
@@ -128,49 +123,32 @@ void loop()
   }
 
   /*configuramos nueva contraseña con boton configuration*/
-  if(botonConfiguration == 1023){
-    bandera = 1;
-    cartel.clear();
-    cartel.home();
-    cartel.write("Nuevo Password:");
-    cartel.setCursor(0,1); 
-    configurar(boton, controlDos, passNuevo);
+ if(botonConfiguration == 1023){
+   ingresoContra = 1; 
   }
- 
-  //programar prendido de led por 5 segundos
   
-  /*if(strcmp(password, ingreso) == 0){
-   if(millis()-tiempoAntes>=periodo){
-     if(contador<6){
-        cartel.setCursor(0,0);
-        cartel.write("PASSWORD OK!    ");
-        estado=!estado; 
-        digitalWrite(ledVerde,estado);  
-        tiempoAntes=millis();
-        contador++;
-        }
-     else{
-      digitalWrite(ledVerde, LOW);
-     }
-   }
-  }*/
+    if(ingresoContra){
+      cartel.home();
+      cartel.write("Nuevo Password:");
 
-  delay(100);
-}
-
-
-void configurar (char key, int cont, char* pass){ 
-  
-if(key){  
-    pass[cont] = key;
-    cont++;
-    cartel.write(key);
-
-    if(cont == 6){
-        cartel.clear();
-        cartel.setCursor(0,0);
-        cartel.write("Cambio OK!     ");   
+      if(boton != NO_KEY){  
+      ingreso[control] = boton;
+      cartel.setCursor(control,1);
+      control++;    
+      cartel.write(boton);
       }
-    } 
-}
+
+      if(control == 6){
+          password[0] = ingreso[0];
+          password[1] = ingreso[1];
+          password[2] = ingreso[2];
+          password[3] = ingreso[3];
+          password[4] = ingreso[4];
+          password[5] = ingreso[5];
+          ingresoContra = 0;
+          reinicio = 1;
+        }      
+    }
   
+  delay(200);  
+}
